@@ -23,6 +23,7 @@ python3 broker.py --port 5000 [--table-interval 5]      # prints tables every 5 
 python3 subscriber.py --topics news alerts --name sub1 [--quiet]   # type: sub <t> / unsub <t>
 python3 publisher.py --topic news --count 10 --name pub1 [-v]
 python3 stats.py [table|stats|all] [--watch 2] [--json]   # query a running broker
-python3 demo2.py                                          # whole scenario on localhost, no root
+python3 demo2.py                                          # whole scenario on localhost, no root (also builds the report)
+python3 plots.py [--results results] [--sweep 1x1,2x10,5x50] [--open]   # HTML report with all plots
 sudo python3 topology.py                                  # Mininet version (needs Linux + controller)
 ```

@@ -27,7 +27,8 @@ if __name__ == "__main__":
     ap.add_argument("--interval", type=float, default=0.3)
     a = ap.parse_args()
     p = str(a.port)
-    os.makedirs(os.path.join(HERE, "results"), exist_ok=True)
+    out = os.path.join(HERE, "results", "local")      # keeps Mininet results/ untouched
+    os.makedirs(out, exist_ok=True)
 
     broker = run("broker.py", "--port", p, "--host", "127.0.0.1")
     time.sleep(1)
@@ -35,7 +36,7 @@ if __name__ == "__main__":
     subs = []
     for i, topics in enumerate((["news", "alerts"], ["news"], ["alerts"]), 1):
         subs.append(run("subscriber.py", "--port", p, "--topics", *topics, "--duration", dur,
-                        "--name", f"sub{i}", "--quiet", "--log", f"results/demo2_sub{i}.csv",
+                        "--name", f"sub{i}", "--quiet", "--log", f"results/local/sub{i}.csv",
                         stdin=subprocess.PIPE))
     time.sleep(1)
     pubs = [run("publisher.py", "--port", p, "--topic", t, "--count", a.count,
@@ -49,5 +50,9 @@ if __name__ == "__main__":
         x.wait()
     print("\n--- final snapshot (after subscribers sent their latency reports) ---")
     subprocess.run([PY, os.path.join(HERE, "stats.py"), "--port", p], cwd=HERE)
+    with open(os.path.join(out, "stats.json"), "w") as f:
+        subprocess.run([PY, os.path.join(HERE, "stats.py"), "--port", p, "--json"], cwd=HERE, stdout=f)
     broker.terminate()
     broker.wait()
+    print("\n--- plots ---")
+    subprocess.run([PY, os.path.join(HERE, "plots.py"), "--results", out], cwd=HERE)

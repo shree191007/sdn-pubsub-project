@@ -97,6 +97,9 @@ def run_test(net):
     print("Latency CSVs saved in %s/" % RESULTS)
     print("\n=== Demo 2: broker pub/sub table + statistics ===")
     print(pubs[0].cmd("python3 %s/stats.py --broker %s --port %d" % (HERE, BROKER_IP, PORT)))
+    # saved for plots.py (python3 plots.py -> results/report.html)
+    pubs[0].cmd("python3 %s/stats.py --broker %s --port %d --json > %s/stats.json"
+                % (HERE, BROKER_IP, PORT, RESULTS))
     print("\n=== Flow table on s1 (what the controller installed) ===")
     print(net.get("s1").cmd("ovs-ofctl -O OpenFlow13 dump-flows s1"))
 
